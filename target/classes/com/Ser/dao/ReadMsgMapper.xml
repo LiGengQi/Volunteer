@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.ReadMsgMapper">
+
+    <!--查询用户的已读消息List<ReadMsg> findAllReadMsg(@Param("phoneNum")String phoneNum);-->
+    <select id="findAllReadMsg" resultType="ReadMsg">
+        select r.message_no,r.is_read,t.task_name,m.send_time,r.phone_num,m.message_content
+        from readmsg r
+        inner join message m
+        on r.message_no = m.message_no
+        inner join task_list t
+        on m.task_no = t.task_no
+        where r.phone_num = #{phoneNum} and is_read = 1
+    </select>
+
+    <!--未读-->
+    <select id="findAllUnReadMsg" resultType="ReadMsg">
+        select r.message_no,r.is_read,t.task_name,m.send_time,r.phone_num,m.message_content
+        from readmsg r
+        inner join message m
+        on r.message_no = m.message_no
+        inner join task_list t
+        on m.task_no = t.task_no
+        where r.phone_num = #{phoneNum} and is_read = 0
+    </select>
+    
+    <!--消息已读int readed(@Param("phoneNum")String phoneNum,@Param("messageNo")int messageNo);-->
+    <update id="readed">
+        update readmsg set is_read = 1 where phone_num = #{phoneNum} and message_no = #{messageNo} ;
+    </update>
+
+    <!--查询消息状态List<ReadMsg> findMsgState(@Param("taskNo")int taskNo);-->
+    <select id="findMsgState" resultType="ReadMsg">
+        select v.vol_name,r.is_read
+        from readmsg r
+        inner join volunteerperson v
+        on r.phone_num = v.phone_num
+        where r.message_no = #{messageNo}
+    </select>
+
+    <!--写消息第三步、建立消息与成员链接
+    int connectMsg(@Param("messageNo")int messageNo,@Param("phoneNums")List<String > phoneNum);-->
+    <insert id="connectMsg">
+        insert into readmsg values
+        <foreach collection="phoneNums" item="item" separator=",">
+            (#{item.phoneNum},0,#{messageNo})
+        </foreach>
+    </insert>
+
+
+
+</mapper>

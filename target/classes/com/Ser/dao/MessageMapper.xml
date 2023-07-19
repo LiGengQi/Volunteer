@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.MessageMapper">
+
+    <!--查询发布的消息List<Message> findAllMessage(@Param("email")String email);-->
+    <select id="findAllMessage" resultType="Message">
+        select m.message_no,m.message_content,m.task_no,m.send_time,t.task_name
+        from message m
+        inner join task_list t
+        on m.task_no = t.task_no
+        where t.org_email = #{email}
+    </select>
+
+    <!--int sendMessage(Message message);写消息  第一步插入信息-->
+    <insert id="sendMessage" useGeneratedKeys="true" keyProperty="messageNo">
+        insert into message
+        values (null ,#{messageContent},#{taskNo},#{sendTime})
+    </insert>
+
+    <!--删除消息int deleteMsg(@Param("messageNo") int messageNo);-->
+    <delete id="deleteMsg">
+        delete from message where message_no = #{messageNo}
+    </delete>
+
+</mapper>

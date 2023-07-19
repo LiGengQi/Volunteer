@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.RegisteredTaskMapper">
+
+    <!--报名任务 int registeredTask(@Param("taskEntry") TaskEntry taskEntry, @Param("taskNo")List<Integer> taskNo);-->
+    <insert id="registeredTask">
+        insert into registered_task values
+        <foreach collection="taskNo" item="tno" separator=",">
+            (#{taskEntry.phoneNum},#{tno},0)
+        </foreach>
+    </insert>
+
+    <!--查询已经报名的任务List<EntriedTask> findEntriedTask(@Param("phoneNum") String phoneNum);-->
+    <select id="findEntriedTask" resultType="EntriedTask">
+        select t.task_no taskNo,t.task_name taskName,o.org_name orgName,t.start_time startTime,t.end_time endTime,r.isPass
+        from registered_task r
+        inner join task_list t
+        on r.task_no = t.task_no
+        inner join organization_list o
+        on t.org_email = o.email
+        inner join volunteerperson v
+        on r.phone_num = v.phone_num
+        where r.phone_num = #{phoneNum}
+    </select>
+
+    <!--移除已经报名的任务int removeEntriedTask(@Param("taskName")String taskName,@Param("taskNo")String taskNo);-->
+    <delete id="removeEntriedTask">
+        delete from registered_task
+        where phone_num = #{phoneNum} and
+        task_no = (select task_no from task_list where task_name = #{taskName})
+    </delete>
+
+    <!--加入某任务 int joinTask(@Param("taskNo")String taskNo,@Param("phoneNum")String phoneNum);-->
+    <insert id="joinTask">
+        insert into grade_list values (?,?,?)
+    </insert>
+
+    <!--查询已报名成员List<RegisteredMember> findAllRegMember(@Param("email") String email);-->
+    <select id="findAllRegMember" resultType="RegisteredMember">
+        select r.task_no,v.phone_num, v.vol_name memberName,t.task_name,v.educational_level,v.skill
+        from registered_task r
+        inner join task_list t
+        on r.task_no = t.task_no
+        inner join volunteerperson v
+        on r.phone_num = v.phone_num
+        where t.org_email = #{email} and r.isPass = 0
+    </select>
+
+    <!--通过已报名成员审核int passMemVerification(@Param("taskNo")String taskNo,@Param("phoneNum")String phoneNum);-->
+    <update id="passMemVerification">
+        update registered_task r
+        set r.isPass = 1
+        where task_no = #{taskNo}
+        and
+        phone_num = #{phoneNum}
+    </update>
+
+    <!--加入某任务第三步、移除报名表的信息int removeResMsg(@Param("taskNo")int taskNo,@Param("phoneNum") String phoneNum);-->
+    <delete id="removeResMsg">
+        delete from registered_task where phone_num = #{phoneNum} and task_no = #{taskNo}
+    </delete>
+    <!--查询以报名任务、第一步:查询taskNo集合
+    List<Integer> findRegisteredTaskNoList(@Param("phoneNum") String phoneNum);-->
+    <!--<select id="findRegisteredTaskNoList" resultType="Integer">
+        select task_no from registered_task where phone_num = #{phoneNum};
+    </select>-->
+
+</mapper>

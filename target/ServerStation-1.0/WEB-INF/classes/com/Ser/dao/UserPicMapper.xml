@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.UserPicMapper">
+
+    <!--int insertPicUrl(@Param("picUrl")String picUrl);插入用户头像路径-->
+    <insert id="insertPicUrl">
+        insert into user_pic values (null,#{picUrl});
+    </insert>
+
+    <!--int updatePhoneNum(@Param("phoneNum")String phoneNum,@Param("picUrl")String picUrl);插入用户名-->
+    <update id="updatePhoneNum">
+        update user_pic set phone_num = #{phoneNum} where pic_url = #{picUrl};
+    </update>
+
+</mapper>

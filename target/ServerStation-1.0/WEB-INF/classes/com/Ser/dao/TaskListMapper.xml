@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.TaskListMapper">
+    
+    <!--查询所有的任务 List<Task> findAllTask();-->
+    <select id="findAllTask" resultType="Task">
+        select * from task_list;
+    </select>
+
+    <!--志愿机构发布任务int issueTask(Task task); -->
+    <insert id="issueTask" useGeneratedKeys="true" keyProperty="taskNo">
+        insert into task_list values
+        (#{taskNo},#{taskName},#{taskType},#{taskAddress},#{particularAddress},#{startTime},#{endTime},#{skill},#{educationalLevel},0,#{personMaxnum},#{orgEmail},#{other})
+    </insert>
+
+    <!--加入某任务、更新现有人数int updateNowNum(@Param("taskNo") int taskNo);-->
+    <update id="updateNowNum">
+        update task_list
+        set person_num = person_num + 1
+        where task_no = #{taskNo}
+    </update>
+
+    <!--查询已发布任务List<OrgEntriedTask> findAllIssueTask(@Param("email")String email);-->
+    <select id="findAllIssueTask" resultType="OrgEntriedTask">
+        select task_name,start_time,particular_address,person_num,other
+        from task_list
+        where org_email = #{email}
+    </select>
+
+    <!--查询志愿者的任务List<VolTaskList> findAllVolTask(@Param("phoneNum")String phoneNum);-->
+    <select id="findAllVolTask" resultType="VolTaskList">
+        select t.task_name taskName,o.org_name orgName,t.start_time startTime,
+            t.org_email orgEmail,t.particular_address particularAddress,t.other other
+            from task_list t
+            inner join organization_list o
+            on t.org_email = o.email
+            inner join grade_list g
+            on t.task_no = g.task_no
+            where g.phone_num = #{phoneNum}
+    </select>
+
+    <!--查询本机构发布的所有任务
+    List<TaskNameAndNo> findAllTaskNameAndNo(@Param("email")String email);-->
+    <select id="findAllTaskNameAndNo" resultType="TaskNameAndNo">
+        select task_name,task_no from task_list where org_email = #{email};
+    </select>
+
+    <!--查询已经报名的任务、第二步：根据taskNo集合查询任务详细信息
+    List<EntriedTask> findRegisteredTask(List<Integer> taskNo);-->
+    <!--<select id="findRegisteredTask" resultType="EntriedTask">
+        select task_no,task_name,org_name,start_time,end_time from task_list;
+    </select>-->
+
+</mapper>

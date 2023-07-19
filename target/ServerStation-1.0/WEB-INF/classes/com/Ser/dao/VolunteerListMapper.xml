@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.VolunteerListMapper">
+    <!--List<Volunteer> getAllVolunteer();-->
+    <select id="getAllVolunteer" resultType="Vola">
+         select * from volunteerperson;
+    </select>
+
+
+    <!--<resultMap id="Vol" type="Volunteer">
+        <id property="phoneNum" column="phone_num"></id>
+        <result property="volName" column="vol_name"></result>
+        <result property="certificateType" column="certificate_type"></result>
+        <result property="certificateNum" column="certificate_num"></result>
+        <result property="birthday" column="birthday"></result>
+        <result property="sex" column="sex"></result>
+        <result property="other" column="other"></result>
+        <result property="educationalLevel" column="educational_level"></result>
+        <result property="volPassword" column="vol_password"></result>
+        <result property="skill" column="skill"></result>
+    </resultMap>-->
+    <!-- Volunteer VolLogin(@Param("phoneNum") String phoneNum,@Param("password")String password);志愿者登录-->
+    <select id="VolLogin" resultType="Volunteer">
+         select * from volunteerperson where phone_num = #{phoneNum} and vol_password = #{password}
+    </select>
+
+    <!--int volRegister(Volunteer volunteer);志愿者注册-->
+    <insert id="volRegister">
+        insert into volunteerperson values (#{phoneNum},#{volName},#{certificateType},#{certificateNum},#{birthday},#{sex},#{educationalLevel},#{skill},#{volPassword},#{other},#{voluntarily},#{presentAddress})
+    </insert>
+
+    <!--查询评分最高的三个人List<MaxGradeUser> findMaxGradeUser();-->
+    <select id="findMaxGradeUser" resultType="MaxGradeUser">
+        select v.vol_name,v.other,u.pic_url
+        from volunteerperson v
+        inner join user_pic u
+        on v.phone_num = u.phone_num
+        where
+        v.phone_num  in
+        (select p.*
+        from(select
+        phone_num
+        from grade_list g
+        group by phone_num
+        order by avg(g.is_grade)  desc
+        limit 3) as p
+        )
+
+    </select>
+
+</mapper>

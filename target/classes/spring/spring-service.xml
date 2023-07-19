@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 扫描service相关的bean -->
+    <context:component-scan base-package="com.Ser.service" />
+
+    <!--DemandMaterialsServiceImp注入IOC-->
+    <bean id="DemandMaterialsServiceImp" class="com.Ser.service.DemandMaterialsServiceImp">
+        <property name="demandMaterialsMapper" ref="demandMaterialsMapper"></property>
+    </bean>
+
+    <!--DonateListServiceImp注入到IOC-->
+    <bean id="DonateListServiceImp" class="com.Ser.service.DonateListServiceImp">
+        <property name="donateListMapper" ref="donateListMapper"></property>
+    </bean>
+
+    <!--GradeListServiceImp注入到IOC-->
+    <bean id="GradeListServiceImp" class="com.Ser.service.GradeListServiceImp">
+        <property name="gradeListMapper" ref="gradeListMapper"></property>
+    </bean>
+
+    <!--OrganizationServiceImp注入到IOC-->
+    <bean id="OrganizationServiceImp" class="com.Ser.service.OrganizationServiceImp">
+        <property name="organizationListMapper" ref="organizationListMapper"></property>
+    </bean>
+
+
+    <!--RegisteredTaskServiceImp注入IOC-->
+    <bean id="RegisteredTaskServiceImp" class="com.Ser.service.RegisteredTaskServiceImp">
+        <property name="registeredTaskMapper" ref="registeredTaskMapper"></property>
+    </bean>
+
+
+    <!--TaskServiceImp注入到IOC-->
+    <bean id="TaskServiceImp" class="com.Ser.service.TaskServiceImp">
+        <property name="taskListMapper" ref="taskListMapper"></property>
+    </bean>
+
+    <!--VolunteerServiceImpl注入到IOC容器中-->
+    <bean id="VolunteerServiceImp" class="com.Ser.service.VolunteerServiceImp">
+        <property name="volunteerListMapper" ref="volunteerListMapper"></property>
+    </bean>
+
+    <!--MessageServeceImpl注入到IOC容器中-->
+    <bean id="MessageServiceImp" class="com.Ser.service.MessageServiceImp">
+        <property name="messageMapper" ref="messageMapper"></property>
+    </bean>
+
+    <!--ReadMsgServiceImp注入到IOC容器中-->
+    <bean id="ReadMsgServiceImp" class="com.Ser.service.ReadMsgServiceImp">
+        <property name="readMsgMapper" ref="readMsgMapper"></property>
+    </bean>
+
+    <!--UserPicServiceImp注入到IOC容器中-->
+    <bean id="UserPicServiceImp" class="com.Ser.service.UserPicServiceImp">
+        <property name="userPicMapper" ref="userPicMapper"></property>
+    </bean>
+
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+</beans>

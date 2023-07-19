@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.DemandMaterialsMapper">
+
+    <resultMap id="findDemand" type="DemandList">
+        <id property="demandNo" column="demand_no"></id>
+        <result property="orgName" column="org_name"></result>
+        <result property="materials" column="materials"></result>
+        <result property="nowNum" column="now_num"></result>
+        <result property="Num" column="num"></result>
+        <result property="receivingAddress" column="receiving_address"></result>
+        <result property="other" column="other"></result>
+        <result property="phoneNum" column="phone_num"></result>
+    </resultMap>
+    <!--查询所有需求信息List<DemandMaterials> findALlDemand();-->
+    <select id="findALlDemand" resultMap="findDemand">
+        select d.demand_no,o.org_name,d.now_num,d.num,d.receiving_address,d.other,d.materials,d.phone_num
+            from demand_materials d
+            inner join organization_list o
+            on o.email = d.person_no
+    </select>
+
+    <!--捐赠物资改变现有数量 int updateNowNum(DonateList donateList);-->
+    <update id="updateNowNum">
+        update demand_materials set now_num = now_num + #{Num} where demand_no = #{donateNo}
+    </update>
+
+    <!--发布物资需求int demandMaterial(@Param("demands") List<DemandIssue> demands);-->
+    <insert id="demandMaterial">
+           insert into demand_materials values
+           <foreach collection="demands" item="dem" separator=",">
+               (null ,#{dem.personNo},#{dem.receivingAddress},#{dem.phoneNum},#{dem.other},#{dem.materials},#{dem.num},0)
+           </foreach>
+    </insert>
+
+
+
+</mapper>

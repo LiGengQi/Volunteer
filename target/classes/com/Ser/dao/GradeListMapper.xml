@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Ser.dao.GradeListMapper">
+
+    <!--获取机构内所有成员 List<EntryMember> findAllMember(@Param("email") String email);-->
+    <select id="findAllMember" resultType="EntryMember">
+        select t.task_name taskName,v.vol_name volName,v.phone_num phoneNum,g.is_grade isGrade
+        from grade_list g
+        inner join volunteerperson v
+        on g.phone_num = v.phone_num
+        inner join task_list t
+        on g.task_no = t.task_no
+        where t.org_email = #{email}
+    </select>
+
+    <!--int gradeToMember(EntryMember entryMember);给成员评分-->
+    <update id="gradeToMember">
+        update grade_list g
+        set g.is_grade = #{isGrade}
+        where task_no =
+        (select t.task_no from task_list t
+        where t.task_name = #{taskName}
+        ) and
+        phone_num = #{phoneNum}
+    </update>
+
+    <!--发布疫情志愿任务int issueEpidemicTask(Task task);-->
+    <insert id="issueEpidemicTask">
+        insert into grade_list (task_no,phone_num)
+        select t.task_no,v.phone_num
+        from volunteerperson v,task_list t
+        where
+        v.voluntarily = 1 and v.present_address = #{presentAddress} and t.task_name = #{taskName}
+    </insert>
+
+    <!--加入某任务、第一步 插入
+    int insertMember(@Param("taskNo")int taskNo,@Param("phoneNum")String phoneNum);-->
+    <insert id="insertMember">
+        insert into grade_list values (#{taskNo},#{phoneNum},0)
+    </insert>
+
+    <!--写消息第二步 查询任务内成员List<PhoneNumList> findAllTaskMem(@Param("taskNo")int taskNo);-->
+    <select id="findAllTaskMem" resultType="PhoneNumList">
+        select phone_num from grade_list where task_no = #{taskNo};
+    </select>
+
+
+</mapper>
